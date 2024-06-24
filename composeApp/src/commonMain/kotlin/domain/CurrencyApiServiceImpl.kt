@@ -11,11 +11,13 @@ import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
-import io.ktor.http.headers
+import io.ktor.client.request.headers
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-class CurrencyApiServiceImpl : CurrencyApiService {
+class CurrencyApiServiceImpl(
+    private val preferences: PreferencesRepository,
+) : CurrencyApiService {
     companion object {
         const val ENDPOINT = "https://api.currencyapi.com/v3/latest"
         const val API_KEY = CURRENCY_API_KEY
@@ -50,7 +52,12 @@ class CurrencyApiServiceImpl : CurrencyApiService {
             if (response.status.value != 200) {
                 RequestState.Error("Failed to fetch data")
             } else {
+                println("API response: ${response.body<String>()}")
                 val responseBody = Json.decodeFromString<ApiResponse>(response.body())
+
+                val lastUpdatedTime = responseBody.meta.lastUpdatedAt
+                preferences.saveLastUpdatedTime(lastUpdatedTime.toLong())
+
                 RequestState.Success(responseBody.data.values.toList())
             }
         } catch (e: Exception) {

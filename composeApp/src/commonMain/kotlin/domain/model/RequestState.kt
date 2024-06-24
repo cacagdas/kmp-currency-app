@@ -19,7 +19,7 @@ sealed class RequestState<out T> {
 
     fun isSuccess() = this is Success
 
-    fun getError() = (this as? Error)?.message
+    fun getErrorMessage() = (this as? Error)?.message
 
-    fun getData() = (this as? Success)?.data
+    fun getSuccessData() = (this as? Success)?.data
 }
