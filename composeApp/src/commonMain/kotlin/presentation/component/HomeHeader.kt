@@ -1,5 +1,6 @@
 package presentation.component
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
@@ -20,11 +22,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import domain.model.Currency
 import domain.model.CurrencyCode
@@ -37,6 +41,8 @@ fun HomeHeader(
     status: RateStatus,
     sourceCurrency: RequestState<Currency>,
     targetCurrency: RequestState<Currency>,
+    amount: Double,
+    onAmountChange: (Double) -> Unit,
     onRatesRefresh: () -> Unit,
     onSwitchCurrencies: () -> Unit,
 ) {
@@ -54,6 +60,10 @@ fun HomeHeader(
             sourceCurrency,
             targetCurrency,
             onSwitchCurrencies,
+        )
+        Spacer(Modifier.height(24.dp))
+        AmountInput(
+            amount, onAmountChange
         )
     }
 }
@@ -171,4 +181,25 @@ fun RowScope.CurrencyView(
             }
         }
     }
+}
+
+@Composable
+fun AmountInput(
+    amount: Double,
+    onAmountChange: (Double) -> Unit,
+) {
+    TextField(
+        "$amount",
+        { onAmountChange(it.toDouble()) },
+        Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .animateContentSize()
+            .height(54.dp),
+        singleLine = true,
+        keyboardOptions =
+            KeyboardOptions(
+                keyboardType = KeyboardType.Decimal,
+            ),
+    )
 }
