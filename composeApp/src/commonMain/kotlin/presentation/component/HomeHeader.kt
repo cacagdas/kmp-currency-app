@@ -1,14 +1,17 @@
 package presentation.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
@@ -23,13 +26,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import domain.model.Currency
+import domain.model.CurrencyCode
 import domain.model.RateStatus
+import domain.model.RequestState
 import util.displayCurrentDateTime
 
 @Composable
 fun HomeHeader(
     status: RateStatus,
+    sourceCurrency: RequestState<Currency>,
+    targetCurrency: RequestState<Currency>,
     onRatesRefresh: () -> Unit,
+    onSwitchCurrencies: () -> Unit,
 ) {
     Column(
         Modifier
@@ -40,6 +49,12 @@ fun HomeHeader(
     ) {
         Spacer(Modifier.height(24.dp))
         RateStatus(status, onRatesRefresh)
+        Spacer(Modifier.height(24.dp))
+        CurrencyInputs(
+            sourceCurrency,
+            targetCurrency,
+            onSwitchCurrencies,
+        )
     }
 }
 
@@ -79,6 +94,79 @@ fun RateStatus(
                     Icons.Default.Refresh,
                     null,
                     Modifier.size(24.dp),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun CurrencyInputs(
+    sourceCurrency: RequestState<Currency>,
+    targetCurrency: RequestState<Currency>,
+    onSwitchCurrencies: () -> Unit,
+) {
+    Row(
+        Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        CurrencyView(
+            "from",
+            sourceCurrency,
+            {},
+        )
+        Spacer(Modifier.height(16.dp))
+        IconButton(onSwitchCurrencies) {
+            Icon(
+                Icons.Default.PlayArrow,
+                null,
+                Modifier.size(24.dp),
+            )
+        }
+        Spacer(Modifier.height(16.dp))
+        CurrencyView(
+            "to",
+            targetCurrency,
+            {},
+        )
+    }
+}
+
+@Composable
+fun RowScope.CurrencyView(
+    placeholder: String,
+    currency: RequestState<Currency>,
+    onClick: () -> Unit,
+) {
+    Column(Modifier.weight(1f)) {
+        Text(
+            modifier = Modifier.padding(start = 12.dp),
+            text = placeholder,
+            fontSize = MaterialTheme.typography.bodySmall.fontSize,
+            color = Color.White,
+        )
+        Spacer(Modifier.height(4.dp))
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(size = 8.dp))
+                .background(Color.White.copy(alpha = 0.05f))
+                .height(54.dp)
+                .clickable { onClick() },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            if (currency.isSuccess()) {
+                Icon(
+                    Icons.Default.PlayArrow,
+                    null,
+                    Modifier.size(24.dp),
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    currency.getSuccessData()?.code?.let { CurrencyCode.valueOf(it).name } ?: "",
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                    color = Color.White,
                 )
             }
         }

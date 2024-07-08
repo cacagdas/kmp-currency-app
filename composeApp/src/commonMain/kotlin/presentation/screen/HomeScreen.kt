@@ -16,17 +16,24 @@ class HomeScreen : Screen {
     override fun Content() {
         val viewModel = getScreenModel<HomeViewModel>()
         val rateStatus by viewModel.rateStatus
+        val sourceCurrency by viewModel.sourceCurrency
+        val targetCurrency by viewModel.targetCurrency
 
         Column(
             Modifier.fillMaxSize().background(Color.White),
         ) {
             HomeHeader(
                 status = rateStatus,
+                sourceCurrency = sourceCurrency,
+                targetCurrency = targetCurrency,
                 onRatesRefresh = {
                     viewModel.sendEvent(
                         HomeUiEvent.RefreshRates,
                     )
                 },
+                onSwitchCurrencies = {
+
+                }
             )
         }
     }
