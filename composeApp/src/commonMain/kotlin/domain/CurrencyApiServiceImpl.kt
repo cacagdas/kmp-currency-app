@@ -13,6 +13,7 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
 
 class CurrencyApiServiceImpl(
@@ -52,11 +53,10 @@ class CurrencyApiServiceImpl(
             if (response.status.value != 200) {
                 RequestState.Error("Failed to fetch data")
             } else {
-                println("API response: ${response.body<String>()}")
                 val responseBody = Json.decodeFromString<ApiResponse>(response.body())
-
                 val lastUpdatedTime = responseBody.meta.lastUpdatedAt
-                preferences.saveLastUpdatedTime(lastUpdatedTime.toLong())
+                // preferences.saveLastUpdatedTime(lastUpdatedTime.toLong())
+                preferences.saveLastUpdatedTime(Clock.System.now().toEpochMilliseconds())
 
                 RequestState.Success(responseBody.data.values.toList())
             }

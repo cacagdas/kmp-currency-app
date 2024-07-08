@@ -5,6 +5,7 @@ import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.coroutines.toFlowSettings
 import domain.PreferencesRepository
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
@@ -27,7 +28,7 @@ class PreferencesImpl(
     override suspend fun isDataFresh(currentTime: Long): Boolean {
         val savedTime = flowSettings.getLong(LAST_UPDATED_TIME, 0L)
 
-        return if (savedTime != 0L) {
+        /*return if (savedTime != 0L) {
             val currentInstant = Instant.fromEpochMilliseconds(currentTime)
             val savedInstant = Instant.fromEpochMilliseconds(savedTime)
 
@@ -38,6 +39,7 @@ class PreferencesImpl(
             return difference < 1
         } else {
             false
-        }
+        }*/
+        return (Clock.System.now().toEpochMilliseconds() - savedTime) < 60_000
     }
 }
