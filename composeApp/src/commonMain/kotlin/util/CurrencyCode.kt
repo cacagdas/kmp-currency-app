@@ -1,4 +1,4 @@
-package domain.model
+package util
 
 enum class CurrencyCode(
     val currency: String

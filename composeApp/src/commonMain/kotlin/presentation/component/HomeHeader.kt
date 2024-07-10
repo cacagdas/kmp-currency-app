@@ -31,7 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import domain.model.Currency
-import domain.model.CurrencyCode
+import util.CurrencyCode
 import domain.model.RateStatus
 import domain.model.RequestState
 import util.displayCurrentDateTime
