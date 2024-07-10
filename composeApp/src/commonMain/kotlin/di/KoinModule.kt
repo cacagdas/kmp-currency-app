@@ -15,9 +15,15 @@ val appModule =
     module {
         single { Settings() }
         single<MongoRepository> { MongoImpl() }
-        single<PreferencesRepository> { PreferencesImpl(get()) }
-        single<CurrencyApiService> { CurrencyApiServiceImpl(get()) }
-        factory { HomeViewModel(get(), get(), get()) }
+        single<PreferencesRepository> { PreferencesImpl(settings = get()) }
+        single<CurrencyApiService> { CurrencyApiServiceImpl(preferences = get()) }
+        factory {
+            HomeViewModel(
+                preferencesRepository = get(),
+                mongoDb = get(),
+                service = get(),
+            )
+        }
     }
 
 fun initKoin() {
