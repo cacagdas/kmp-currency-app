@@ -6,7 +6,7 @@ enum class RateStatus(
     val title: String,
     val color: Color,
 ) {
-    Idle("Rates", Color.Gray),
-    Fresh("Fresh rates", Color.Green),
-    Stale("Rates are not fresh", Color.Red),
+    Idle("Rates", Color.LightGray),
+    Fresh("Fresh rates", Color.White),
+    Stale("Rates are not fresh", Color.Magenta),
 }

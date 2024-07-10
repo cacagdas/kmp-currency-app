@@ -31,9 +31,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import domain.model.Currency
-import util.CurrencyCode
 import domain.model.RateStatus
 import domain.model.RequestState
+import util.CurrencyCode
 import util.displayCurrentDateTime
 
 @Composable
@@ -50,7 +50,7 @@ fun HomeHeader(
         Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp))
-            .background(Color.LightGray)
+            .background(Color.Blue)
             .padding(24.dp),
     ) {
         Spacer(Modifier.height(24.dp))
@@ -63,7 +63,8 @@ fun HomeHeader(
         )
         Spacer(Modifier.height(24.dp))
         AmountInput(
-            amount, onAmountChange
+            amount,
+            onAmountChange,
         )
     }
 }
@@ -160,7 +161,7 @@ fun RowScope.CurrencyView(
             Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(size = 8.dp))
-                .background(Color.White.copy(alpha = 0.05f))
+                .background(Color.LightGray)
                 .height(54.dp)
                 .clickable { onClick() },
             verticalAlignment = Alignment.CenterVertically,
