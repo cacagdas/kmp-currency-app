@@ -19,6 +19,7 @@ import kotlinx.datetime.Clock
 
 sealed class HomeUiEvent {
     data object RefreshRates : HomeUiEvent()
+    data object SwitchCurrencies : HomeUiEvent()
 }
 
 class HomeViewModel(
@@ -54,6 +55,10 @@ class HomeViewModel(
                 screenModelScope.launch {
                     fetchNewRates()
                 }
+
+            HomeUiEvent.SwitchCurrencies -> {
+                switchCurrencies()
+            }
         }
     }
 
@@ -128,5 +133,12 @@ class HomeViewModel(
             } else {
                 RateStatus.Stale
             }
+    }
+
+    private fun switchCurrencies() {
+        val source = _sourceCurrency.value
+        val target = _targetCurrency.value
+        _sourceCurrency.value = target
+        _targetCurrency.value = source
     }
 }

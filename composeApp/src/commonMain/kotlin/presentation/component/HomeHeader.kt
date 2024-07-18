@@ -1,6 +1,8 @@
 package presentation.component
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,10 +26,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import domain.model.Currency
@@ -117,6 +124,11 @@ fun CurrencyInputs(
     targetCurrency: RequestState<Currency>,
     onSwitchCurrencies: () -> Unit,
 ) {
+    var animationStarted by remember { mutableStateOf(false) }
+    val animatedRotation by animateFloatAsState(
+        targetValue = if (animationStarted) 180f else 0f,
+        animationSpec = tween(durationMillis = 500),
+    )
     Row(
         Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -127,11 +139,23 @@ fun CurrencyInputs(
             {},
         )
         Spacer(Modifier.height(16.dp))
-        IconButton(onSwitchCurrencies) {
+        IconButton(
+            modifier =
+                Modifier
+                    .padding(top = 24.dp)
+                    .graphicsLayer {
+                        rotationY = animatedRotation
+                    },
+            onClick = {
+                animationStarted = !animationStarted
+                onSwitchCurrencies()
+            },
+        ) {
             Icon(
                 Icons.Default.PlayArrow,
                 null,
                 Modifier.size(24.dp),
+                tint = Color.White,
             )
         }
         Spacer(Modifier.height(16.dp))
