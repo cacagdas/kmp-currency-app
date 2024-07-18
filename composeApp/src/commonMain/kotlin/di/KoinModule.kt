@@ -19,7 +19,7 @@ val appModule =
         single<CurrencyApiService> { CurrencyApiServiceImpl(preferences = get()) }
         factory {
             HomeViewModel(
-                preferencesRepository = get(),
+                preferences = get(),
                 mongoDb = get(),
                 service = get(),
             )

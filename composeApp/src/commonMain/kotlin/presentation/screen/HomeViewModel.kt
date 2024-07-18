@@ -23,7 +23,7 @@ sealed class HomeUiEvent {
 }
 
 class HomeViewModel(
-    private val preferencesRepository: PreferencesRepository,
+    private val preferences: PreferencesRepository,
     private val mongoDb: MongoRepository,
     private val service: CurrencyApiService,
 ) : ScreenModel {
@@ -64,7 +64,7 @@ class HomeViewModel(
 
     private fun readSourceCurrencyCode() {
         screenModelScope.launch {
-            preferencesRepository.readSourceCurrencyCode().collectLatest { code ->
+            preferences.readSourceCurrencyCode().collectLatest { code ->
                 val selectedCurrency = _allCurrencies.find { it.code == code.name }
                 selectedCurrency?.let {
                     _sourceCurrency.value = RequestState.Success(it)
@@ -77,7 +77,7 @@ class HomeViewModel(
 
     private fun readTargetCurrencyCode() {
         screenModelScope.launch {
-            preferencesRepository.readTargetCurrencyCode().collectLatest { code ->
+            preferences.readTargetCurrencyCode().collectLatest { code ->
                 val selectedCurrency = _allCurrencies.find { it.code == code.name }
                 selectedCurrency?.let {
                     _targetCurrency.value = RequestState.Success(it)
@@ -93,8 +93,11 @@ class HomeViewModel(
             val localCache = mongoDb.readCurrencyData().first()
             if (localCache.isSuccess()) {
                 if (localCache.getSuccessData()?.isNotEmpty() == true) {
-                    localCache.getSuccessData()?.let { _allCurrencies.addAll(it) }
-                    if (!preferencesRepository.isDataFresh(
+                    _allCurrencies.clear()
+                    localCache.getSuccessData()?.let {
+                        _allCurrencies.addAll(it)
+                    }
+                    if (!preferences.isDataFresh(
                             Clock.System.now().toEpochMilliseconds(),
                         )
                     ) {
@@ -118,6 +121,7 @@ class HomeViewModel(
                 it.forEach { currency ->
                     mongoDb.insertCurrencyData(currency)
                 }
+                _allCurrencies.clear()
                 _allCurrencies.addAll(it)
             }
         }
@@ -125,7 +129,7 @@ class HomeViewModel(
 
     private suspend fun getRateStatus() {
         _rateStatus.value =
-            if (preferencesRepository.isDataFresh(
+            if (preferences.isDataFresh(
                     Clock.System.now().toEpochMilliseconds(),
                 )
             ) {
