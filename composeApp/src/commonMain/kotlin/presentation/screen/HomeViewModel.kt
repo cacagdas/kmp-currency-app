@@ -12,6 +12,7 @@ import domain.PreferencesRepository
 import domain.model.Currency
 import domain.model.RateStatus
 import domain.model.RequestState
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -42,6 +43,8 @@ class HomeViewModel(
     init {
         screenModelScope.launch {
             fetchNewRates()
+            readSourceCurrencyCode()
+            readTargetCurrencyCode()
         }
     }
 
@@ -51,6 +54,32 @@ class HomeViewModel(
                 screenModelScope.launch {
                     fetchNewRates()
                 }
+        }
+    }
+
+    private fun readSourceCurrencyCode() {
+        screenModelScope.launch {
+            preferencesRepository.readSourceCurrencyCode().collectLatest { code ->
+                val selectedCurrency = _allCurrencies.find { it.code == code.name }
+                selectedCurrency?.let {
+                    _sourceCurrency.value = RequestState.Success(it)
+                } ?: run {
+                    _sourceCurrency.value = RequestState.Error("Currency not found")
+                }
+            }
+        }
+    }
+
+    private fun readTargetCurrencyCode() {
+        screenModelScope.launch {
+            preferencesRepository.readTargetCurrencyCode().collectLatest { code ->
+                val selectedCurrency = _allCurrencies.find { it.code == code.name }
+                selectedCurrency?.let {
+                    _targetCurrency.value = RequestState.Success(it)
+                } ?: run {
+                    _targetCurrency.value = RequestState.Error("Currency not found")
+                }
+            }
         }
     }
 
