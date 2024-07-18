@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import domain.model.Currency
+import domain.model.DisplayResult
 import domain.model.RateStatus
 import domain.model.RequestState
 import util.CurrencyCode
@@ -191,19 +192,21 @@ fun RowScope.CurrencyView(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
         ) {
-            if (currency.isSuccess()) {
-                Icon(
-                    Icons.Default.PlayArrow,
-                    null,
-                    Modifier.size(24.dp),
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    currency.getSuccessData()?.code?.let { CurrencyCode.valueOf(it).name } ?: "",
-                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                    color = Color.White,
-                )
-            }
+            currency.DisplayResult(
+                onSuccess = { data ->
+                    Icon(
+                        Icons.Default.PlayArrow,
+                        null,
+                        Modifier.size(24.dp),
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        CurrencyCode.valueOf(data?.code ?: CurrencyCode.TRY.name).name,
+                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                        color = Color.White,
+                    )
+                },
+            )
         }
     }
 }
