@@ -3,12 +3,14 @@ package util
 enum class CurrencyCode(
     val country: String,
 ) {
+    ADA("Unknown"),
     AED("United Arab Emirates"),
     AFN("Afghanistan"),
     ALL("Albania"),
     AMD("Armenia"),
     ANG("Netherlands"),
     AOA("Angola"),
+    ARB("Unknown"),
     ARS("Argentina"),
     AUD("Australia"),
     AZN("Azerbaijan"),

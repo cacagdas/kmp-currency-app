@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import domain.model.Currency
+import domain.model.CurrencyType
 import domain.model.DisplayResult
 import domain.model.RateStatus
 import domain.model.RequestState
@@ -53,6 +54,7 @@ fun HomeHeader(
     onAmountChange: (Double) -> Unit,
     onRatesRefresh: () -> Unit,
     onSwitchCurrencies: () -> Unit,
+    onCurrencyTypeSelect: (CurrencyType) -> Unit,
 ) {
     Column(
         Modifier
@@ -68,6 +70,7 @@ fun HomeHeader(
             sourceCurrency,
             targetCurrency,
             onSwitchCurrencies,
+            onCurrencyTypeSelect,
         )
         Spacer(Modifier.height(24.dp))
         AmountInput(
@@ -124,6 +127,7 @@ fun CurrencyInputs(
     sourceCurrency: RequestState<Currency>,
     targetCurrency: RequestState<Currency>,
     onSwitchCurrencies: () -> Unit,
+    onCurrencyTypeSelect: (CurrencyType) -> Unit,
 ) {
     var animationStarted by remember { mutableStateOf(false) }
     val animatedRotation by animateFloatAsState(
@@ -137,8 +141,17 @@ fun CurrencyInputs(
         CurrencyView(
             "from",
             sourceCurrency,
-            {},
-        )
+        ) {
+            if (sourceCurrency.isSuccess()) {
+                onCurrencyTypeSelect(
+                    CurrencyType.Source(
+                        CurrencyCode.valueOf(
+                            sourceCurrency.getSuccessData()?.code ?: "TRY",
+                        ),
+                    ),
+                )
+            }
+        }
         Spacer(Modifier.height(16.dp))
         IconButton(
             modifier =
@@ -163,8 +176,17 @@ fun CurrencyInputs(
         CurrencyView(
             "to",
             targetCurrency,
-            {},
-        )
+        ) {
+            if (targetCurrency.isSuccess()) {
+                onCurrencyTypeSelect(
+                    CurrencyType.Target(
+                        CurrencyCode.valueOf(
+                            sourceCurrency.getSuccessData()?.code ?: "TRY",
+                        ),
+                    ),
+                )
+            }
+        }
     }
 }
 
