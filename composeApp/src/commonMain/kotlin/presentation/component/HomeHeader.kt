@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import data.local.PreferencesImpl.Companion.DEFAULT_SOURCE_CURRENCY_CODE
 import domain.model.Currency
 import domain.model.CurrencyType
 import domain.model.DisplayResult
@@ -146,7 +147,7 @@ fun CurrencyInputs(
                 onCurrencyTypeSelect(
                     CurrencyType.Source(
                         CurrencyCode.valueOf(
-                            sourceCurrency.getSuccessData()?.code ?: "TRY",
+                            sourceCurrency.getSuccessData()?.code ?: DEFAULT_SOURCE_CURRENCY_CODE,
                         ),
                     ),
                 )
@@ -181,7 +182,7 @@ fun CurrencyInputs(
                 onCurrencyTypeSelect(
                     CurrencyType.Target(
                         CurrencyCode.valueOf(
-                            sourceCurrency.getSuccessData()?.code ?: "TRY",
+                            sourceCurrency.getSuccessData()?.code ?: DEFAULT_SOURCE_CURRENCY_CODE,
                         ),
                     ),
                 )
